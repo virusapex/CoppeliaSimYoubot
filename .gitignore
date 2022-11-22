@@ -1,4 +1,4 @@
 models/
 runs/
 wandb/
-YoubotPole/__pycache__/
+__pycache__
