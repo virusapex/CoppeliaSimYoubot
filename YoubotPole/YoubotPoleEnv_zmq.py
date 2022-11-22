@@ -16,7 +16,7 @@ class YoubotPoleEnv(gym.Env):
         self.q = [0.0, 0.0]
         self.q_last = [0.0, 0.0]
 
-        self.theta_max = 40*np.pi / 360
+        self.theta_max = 40 * np.pi / 180
         self.youbot_pos_max = 2.0
 
         high = np.array(
@@ -39,8 +39,8 @@ class YoubotPoleEnv(gym.Env):
 
         # Connect to CoppeliaSim
         self.client = RemoteAPIClient(port=port)
-        print('Connected to remote API server.')
         self.sim = self.client.getObject('sim')
+        print('Connected to remote API server.')
         # When simulation is not running, ZMQ message handling could be a bit
         # slow, since the idle loop runs at 8 Hz by default. So let's make
         # sure that the idle loop runs at full speed for this program:
@@ -60,12 +60,21 @@ class YoubotPoleEnv(gym.Env):
         q = [0.0, 0.0]
         # Position of Youbot plate (Y-axis)
         q[0] = self.youbot_pole_sim_model.getJointPosition(self.sim, 'block')[1]
+        # Adding Gaussian noise to simulate sensor readings
+        q[0] += np.random.normal(0,0.005)
         # Angle of the pole
         q[1] = self.youbot_pole_sim_model.getJointPosition(self.sim, 'revolute_joint')
+        # Adding Gaussian noise to simulate sensor readings
+        q[1] += np.random.normal(0,0.005)
         self.q_last = self.q
         self.q = q
 
-        # The action is in [-1.0, 1.0], therefore the force is in [-2.5, 2.5]
+        bruh = np.random.randint(800,1200)
+        # Adding random force to the pole
+        if self.counts % bruh == 0:
+            self.youbot_pole_sim_model.addRandomForce(self.sim, 10.)
+
+        # The action is in [-1.0, 1.0], therefore the force is in [-25, 25]
         self.push_force = action*25
 
         # Set action
@@ -76,11 +85,12 @@ class YoubotPoleEnv(gym.Env):
         done = bool(done)
 
         if not done:
-            reward = (1 - (q[0]**2)/16 - (q[1]**2)/0.4869)
+            # Normalizing distance and angle values to be exact equal factors (50/50)
+            reward = (1 - (q[0]**2)/8 - (q[1]**2)/0.97478)
         elif self.steps_beyond_done is None:
             # Pole just fell!
             self.steps_beyond_done = 0
-            reward = (1 - (q[0]**2)/16 - (q[1]**2)/0.4869)
+            reward = (1 - (q[0]**2)/8 - (q[1]**2)/0.97478)
         else:
             if self.steps_beyond_done == 0:
                 logger.warn(
@@ -118,7 +128,6 @@ class YoubotPoleEnv(gym.Env):
         #     False,
         #     vrep_sim.simx_opmode_oneshot)
 
-        self.client.setStepping(False)
         self.client.setStepping(True)
         self.sim.startSimulation()
         self.youbot_pole_sim_model.setYoubotTorque(self.sim, 0)
@@ -134,10 +143,10 @@ class YoubotPoleEnv(gym.Env):
         return None
 
 if __name__ == "__main__":
-    env = YoubotPoleEnv()
+    env = YoubotPoleEnv(23000)
     env.reset()
 
-    for _ in range(500):
+    for _ in range(5000):
         action = env.action_space.sample() # random action
         env.step(action)
         print(env.state)

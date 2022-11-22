@@ -11,6 +11,7 @@ class YoubotPoleSimModel():
         self.revolute_joint_handle = None
         # front left, rear left, rear right, front right
         self.wheelJoints=[-1,-1,-1,-1]
+        self.pole_handle = None
 
     def initializeSimModel(self, sim):
         self.block_handle = sim.getObject('/youBot/Block')
@@ -35,6 +36,10 @@ class YoubotPoleSimModel():
         q = sim.getJointPosition(self.wheelJoints[1])
         q = sim.getJointPosition(self.wheelJoints[2])
         q = sim.getJointPosition(self.wheelJoints[3])
+
+        self.pole_handle = sim.getObject('/youBot/Pole')
+        if (self.pole_handle != -1):
+            print('Got the pole handle.')
         # Set the initialized position for each joint
         self.setYoubotTorque(sim, 0)
     
@@ -54,3 +59,6 @@ class YoubotPoleSimModel():
         sim.setJointTargetForce(self.wheelJoints[1], -forwBackVel+leftRightVel-rotVel)
         sim.setJointTargetForce(self.wheelJoints[2], -forwBackVel-leftRightVel+rotVel)
         sim.setJointTargetForce(self.wheelJoints[3], -forwBackVel+leftRightVel+rotVel)
+    
+    def addRandomForce(self, sim, force=0.):
+        sim.addForce(self.pole_handle, [0,0,0.4], [force,0,0])

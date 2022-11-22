@@ -1,0 +1,5 @@
+a2c_subprocenv_940          - unstable torque, 1000000 iterations
+ppo_sgd_subprocenv_730      - short balance time, 250000 iterations, maybe add more time to learn?
+ppo_subprocenv_7200         - stable model, 250000 iterations
+recurrentppo_subprocenv_350 - short balance time, 1000000 iterations, probably requires extensive hyperparameter tuning
+test_ppo                    - infinite time, 2250000 iterations, two finetunes

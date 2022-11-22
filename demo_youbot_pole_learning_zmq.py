@@ -3,6 +3,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3 import PPO, A2C
 from sb3_contrib import RecurrentPPO
 import numpy as np
@@ -13,11 +14,26 @@ from wandb.integration.sb3 import WandbCallback
 from YoubotPole.YoubotPoleEnv_zmq import YoubotPoleEnv
 
 
+def make_env(port=23000):
+    """
+    Helper function to multiprocess training
+    and log the progress.
+    """
+    def _init():
+        env = YoubotPoleEnv(port)
+        env.seed(port+1)
+        check_env(env)
+        env = Monitor(env)
+        return env
+    set_random_seed(port)
+    return _init
+
+
 if __name__ == "__main__":
     # ---------------- Create environment
     # env = YoubotPoleEnv()
     env = SubprocVecEnv(
-        [lambda: Monitor(YoubotPoleEnv(23000)), lambda: Monitor(YoubotPoleEnv(23002))])
+        [make_env(x) for x in range(23000, 23000+(2*4), 2)])
     # check_env(env)
 
     # ---------------- Callback functions
@@ -54,15 +70,15 @@ if __name__ == "__main__":
     # # ---------------- Learning
     model.learn(total_timesteps=config["total_timesteps"],
                 callback=WandbCallback(
-                    model_save_freq=10000,
+                    model_save_freq=25000,
                     model_save_path=f"models/{run.id}",
                     verbose=2))
                 
     print('Finished')
     del model
 
-    # model = A2C.load(f"models/{run.id}/model", env=env)
     env = YoubotPoleEnv(23000)
+    # model = A2C.load(f"models/{run.id}/model", env=env)
     model = PPO.load(f"models/{run.id}/model", env=env)
     # model = RecurrentPPO.load(f"models/{run.id}/model", env=env)
 
