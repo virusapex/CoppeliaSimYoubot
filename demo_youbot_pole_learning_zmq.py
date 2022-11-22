@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # ---------------- Create environment
     # env = YoubotPoleEnv()
     env = SubprocVecEnv(
-        [make_env(x) for x in range(23000, 23000+(2*4), 2)])
+        [make_env(x) for x in range(23000, 23000+(2*1), 2)])
     # check_env(env)
 
     # ---------------- Callback functions
