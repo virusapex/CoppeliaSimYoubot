@@ -3,3 +3,4 @@ ppo_sgd_subprocenv_730      - short balance time, 250000 iterations, maybe add m
 ppo_subprocenv_7200         - stable model, 250000 iterations
 recurrentppo_subprocenv_350 - short balance time, 1000000 iterations, probably requires extensive hyperparameter tuning
 test_ppo                    - infinite time, 2250000 iterations, two finetunes
+test_ppo_2_360              - short balance time, 10000000 iterations, 8 simulations, had 1300 rewards at some point

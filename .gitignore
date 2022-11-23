@@ -1,4 +1,4 @@
-models/
+models_train/
 runs/
 wandb/
 __pycache__/

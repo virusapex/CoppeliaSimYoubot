@@ -32,22 +32,22 @@ def make_env(port=23000):
 if __name__ == "__main__":
     # ---------------- Create environment
     # env = YoubotPoleEnv()
-    env = SubprocVecEnv(
-        [make_env(x) for x in range(23000, 23000+(2*1), 2)])
+    # env = SubprocVecEnv(
+    #     [make_env(x) for x in range(23000, 23000+(2*1), 2)])
     # check_env(env)
 
     # ---------------- Callback functions
     # env = Monitor(env)
-    config = {
-        "policy_type": "MlpPolicy",
-        "total_timesteps": 250000,
-        "env_name": "YoubotPoleEnv",}
+    # config = {
+    #     "policy_type": "MlpPolicy",
+    #     "total_timesteps": 250000,
+    #     "env_name": "YoubotPoleEnv",}
 
-    run = wandb.init(
-        project="youbot_pole",
-        config=config,
-        sync_tensorboard=True,
-        save_code=True)
+    # run = wandb.init(
+    #     project="youbot_pole",
+    #     config=config,
+    #     sync_tensorboard=True,
+    #     save_code=True)
 
     # ---------------- Model
     # model = A2C(
@@ -55,12 +55,12 @@ if __name__ == "__main__":
     #     env,
     #     verbose=1,
     #     tensorboard_log=f"runs/{run.id}")
-    model = PPO(
-        config["policy_type"],
-        env,
-        use_sde=False,
-        verbose=1,
-        tensorboard_log=f"runs/{run.id}")
+    # model = PPO(
+    #     config["policy_type"],
+    #     env,
+    #     use_sde=False,
+    #     verbose=1,
+    #     tensorboard_log=f"runs/{run.id}")
     # model = RecurrentPPO(
     #     "MlpLstmPolicy",
     #     env,
@@ -68,18 +68,18 @@ if __name__ == "__main__":
     #     tensorboard_log=f"runs/{run.id}")
 
     # # ---------------- Learning
-    model.learn(total_timesteps=config["total_timesteps"],
-                callback=WandbCallback(
-                    model_save_freq=25000,
-                    model_save_path=f"models/{run.id}",
-                    verbose=2))
+    # model.learn(total_timesteps=config["total_timesteps"],
+    #             callback=WandbCallback(
+    #                 model_save_freq=25000,
+    #                 model_save_path=f"models/{run.id}",
+    #                 verbose=2))
                 
-    print('Finished')
-    del model
+    # print('Finished')
+    # del model
 
     env = YoubotPoleEnv(23000)
     # model = A2C.load(f"models/{run.id}/model", env=env)
-    model = PPO.load(f"models/{run.id}/model", env=env)
+    model = PPO.load(f"model", env=env)
     # model = RecurrentPPO.load(f"models/{run.id}/model", env=env)
 
     # ---------------- Prediction
