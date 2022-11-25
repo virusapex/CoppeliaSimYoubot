@@ -4,7 +4,7 @@ from gym.utils import seeding
 from gym import spaces, logger
 import time
 from zmqRemoteApi import RemoteAPIClient
-from .YoubotPoleSimModel_zmq import YoubotPoleSimModel
+from YoubotPole.envs.YoubotPoleSimModel import YoubotPoleSimModel
 
 
 class YoubotPoleEnv(gym.Env):

@@ -2,3 +2,4 @@ models_train/
 runs/
 wandb/
 __pycache__/
+*.egg-info/
