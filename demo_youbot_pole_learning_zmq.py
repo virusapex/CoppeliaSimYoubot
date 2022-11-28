@@ -11,7 +11,7 @@ import numpy as np
 import wandb
 from wandb.integration.sb3 import WandbCallback
 
-import YoubotPole
+from YoubotPole.envs.YoubotPoleEnv import YoubotPoleEnv
 
 
 def make_env(port=23000):
@@ -20,7 +20,7 @@ def make_env(port=23000):
     and log the progress.
     """
     def _init():
-        env = YoubotPole(port)
+        env = YoubotPoleEnv(port)
         env.seed(port+1)
         check_env(env)
         env = Monitor(env)
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     env = YoubotPoleEnv(23000)
     # model = A2C.load(f"models/{run.id}/model", env=env)
-    model = PPO.load(f"model", env=env)
+    model = PPO.load(f"best_model", env=env)
     # model = RecurrentPPO.load(f"models/{run.id}/model", env=env)
 
     # ---------------- Prediction

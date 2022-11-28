@@ -72,7 +72,10 @@ class YoubotPoleEnv(gym.Env):
         bruh = np.random.randint(1200,1600)
         # Adding random force to the pole
         if self.counts % bruh == 0:
-            self.youbot_pole_sim_model.addRandomForce(self.sim, np.random.choice([-10.,10.]))
+            if q[0] > 0.:
+                self.youbot_pole_sim_model.addRandomForce(self.sim, -10.)
+            else:
+                self.youbot_pole_sim_model.addRandomForce(self.sim, 10.)
 
         # The action is in [-1.0, 1.0], therefore the force is in [-25, 25]
         self.push_force = action*25
