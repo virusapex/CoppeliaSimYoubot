@@ -2,7 +2,7 @@ import numpy as np
 import gym
 from gym.utils import seeding
 from gym import spaces, logger
-import time
+import time, copy
 from zmqRemoteApi import RemoteAPIClient
 from YoubotPole.envs.YoubotPoleSimModel import YoubotPoleSimModel
 
@@ -36,6 +36,7 @@ class YoubotPoleEnv(gym.Env):
         self.state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
         self.counts = 0
         self.steps_beyond_done = None
+        self.applied_force = False
 
         # Connect to CoppeliaSim
         self.client = RemoteAPIClient(port=port)
@@ -71,14 +72,18 @@ class YoubotPoleEnv(gym.Env):
 
         bruh = np.random.randint(1200,1600)
         # Adding random force to the pole
-        if self.counts % bruh == 0:
+        if self.counts == 0:
+            self.youbot_pole_sim_model.addRandomForce(self.sim, np.random.choice([-7.5,7.5]))
+        elif self.counts % bruh == 0 and self.counts - self.applied_force > 400:
             if q[0] > 0.:
-                self.youbot_pole_sim_model.addRandomForce(self.sim, -10.)
+                self.youbot_pole_sim_model.addRandomForce(self.sim, -7.5)
+                self.applied_force = copy.deepcopy(self.counts)
             else:
-                self.youbot_pole_sim_model.addRandomForce(self.sim, 10.)
+                self.youbot_pole_sim_model.addRandomForce(self.sim, 7.5)
+                self.applied_force = copy.deepcopy(self.counts)
 
-        # The action is in [-1.0, 1.0], therefore the force is in [-25, 25]
-        self.push_force = action*25
+        # The action is in [-1.0, 1.0], therefore the force is in [-30, 30]
+        self.push_force = action*30
 
         # Set action
         self.youbot_pole_sim_model.setYoubotTorque(self.sim, self.push_force[0])
