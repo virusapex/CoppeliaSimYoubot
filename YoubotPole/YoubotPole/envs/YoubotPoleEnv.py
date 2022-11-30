@@ -62,7 +62,7 @@ class YoubotPoleEnv(gym.Env):
         # Position of Youbot plate (Y-axis)
         q[0] = self.youbot_pole_sim_model.getJointPosition(self.sim, 'block')[1]
         # Adding Gaussian noise to simulate sensor readings
-        q[0] += np.random.normal(0,0.005)
+        q[0] += np.random.normal(0,0.003)
         # Angle of the pole
         q[1] = self.youbot_pole_sim_model.getJointPosition(self.sim, 'revolute_joint')
         # Adding Gaussian noise to simulate sensor readings
@@ -70,16 +70,16 @@ class YoubotPoleEnv(gym.Env):
         self.q_last = self.q
         self.q = q
 
-        bruh = np.random.randint(1200,1600)
+        bruh = np.random.randint(2000,2400)
         # Adding random force to the pole
         if self.counts == 0:
-            self.youbot_pole_sim_model.addRandomForce(self.sim, np.random.choice([-7.5,7.5]))
+            self.youbot_pole_sim_model.addRandomForce(self.sim, np.random.choice([-10.,10.]))
         elif self.counts % bruh == 0 and self.counts - self.applied_force > 400:
             if q[0] > 0.:
-                self.youbot_pole_sim_model.addRandomForce(self.sim, -7.5)
+                self.youbot_pole_sim_model.addRandomForce(self.sim, -10.)
                 self.applied_force = copy.deepcopy(self.counts)
             else:
-                self.youbot_pole_sim_model.addRandomForce(self.sim, 7.5)
+                self.youbot_pole_sim_model.addRandomForce(self.sim, 10.)
                 self.applied_force = copy.deepcopy(self.counts)
 
         # The action is in [-1.0, 1.0], therefore the force is in [-30, 30]
