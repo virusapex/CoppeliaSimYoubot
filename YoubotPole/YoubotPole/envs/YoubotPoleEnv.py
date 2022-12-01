@@ -36,7 +36,7 @@ class YoubotPoleEnv(gym.Env):
         self.state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
         self.counts = 0
         self.steps_beyond_done = None
-        self.applied_force = False
+        self.applied_force = 0
 
         # Connect to CoppeliaSim
         self.client = RemoteAPIClient(port=port)
