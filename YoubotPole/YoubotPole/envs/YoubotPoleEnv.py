@@ -70,17 +70,17 @@ class YoubotPoleEnv(gym.Env):
         self.q_last = self.q
         self.q = q
 
-        bruh = np.random.randint(2000,2400)
+        # bruh = np.random.randint(2000,2400)
         # Adding random force to the pole
         if self.counts == 0:
             self.youbot_pole_sim_model.addRandomForce(self.sim, np.random.choice([-10.,10.]))
-        elif self.counts % bruh == 0 and self.counts - self.applied_force > 400:
-            if q[0] > 0.:
-                self.youbot_pole_sim_model.addRandomForce(self.sim, -10.)
-                self.applied_force = copy.deepcopy(self.counts)
-            else:
-                self.youbot_pole_sim_model.addRandomForce(self.sim, 10.)
-                self.applied_force = copy.deepcopy(self.counts)
+        # elif self.counts % bruh == 0 and self.counts - self.applied_force > 400:
+        #     if q[0] > 0.:
+        #         self.youbot_pole_sim_model.addRandomForce(self.sim, -10.)
+        #         self.applied_force = copy.deepcopy(self.counts)
+        #     else:
+        #         self.youbot_pole_sim_model.addRandomForce(self.sim, 10.)
+        #         self.applied_force = copy.deepcopy(self.counts)
 
         # The action is in [-1.0, 1.0], therefore the force is in [-30, 30]
         self.push_force = action*30
@@ -95,8 +95,8 @@ class YoubotPoleEnv(gym.Env):
         if not done:
             # Normalizing distance and angle values to be exact equal factors (50/50)
             reward = (1 - (q[0]**2)/8 - (q[1]**2)/0.97478)
-        elif self.steps_beyond_done is None or self.counts == 12000:
-            # Pole just fell or we are done with the episode!
+        elif self.steps_beyond_done is None:
+            # Pole just fell!
             self.steps_beyond_done = 0
             reward = (1 - (q[0]**2)/8 - (q[1]**2)/0.97478)
         else:

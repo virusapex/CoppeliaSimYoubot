@@ -79,8 +79,8 @@ if __name__ == "__main__":
 
     env = YoubotPoleEnv(23000)
     # model = A2C.load(f"models/{run.id}/model", env=env)
-    # model = PPO.load(f"best_model", env=env)
-    model = RecurrentPPO.load(f"YoubotPole-v0", env=env)
+    model = PPO.load(f"models/test_ppo_2", env=env)
+    # model = RecurrentPPO.load(f"YoubotPole-v0", env=env)
 
     # ---------------- Prediction
     print('Prediction')
@@ -91,18 +91,18 @@ if __name__ == "__main__":
 
         num_envs = 1
         # Episode start signals are used to reset the lstm states
-        lstm_states = None
-        episode_starts = np.ones((num_envs,), dtype=bool)
+        #lstm_states = None
+        #episode_starts = np.ones((num_envs,), dtype=bool)
         # states = model.initial_state
         # dones = np.zeros(states.shape[0])
 
         while not done:
-            action, lstm_states = model.predict(
-                observation,
-                state=lstm_states,
-                episode_start=episode_starts,
-                deterministic=True)
-            # action, _state = model.predict(observation, deterministic=True)
+            # action, lstm_states = model.predict(
+            #     observation,
+            #     state=lstm_states,
+            #     episode_start=episode_starts,
+            #     deterministic=True)
+            action, _state = model.predict(observation, deterministic=True)
             observation, reward, done, info = env.step(action)
             episode_reward += reward
             episode_starts = done
