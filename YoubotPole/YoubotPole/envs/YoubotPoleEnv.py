@@ -93,12 +93,12 @@ class YoubotPoleEnv(gym.Env):
         done = bool(done)
 
         if not done:
-            # Normalizing distance and angle values to be exact equal factors (50/50)
-            reward = (1 - (q[0]**2)/8 - (q[1]**2)/0.97478)
+            # Normalizing distance and angle values (33/67)
+            reward = (1 - (q[0]**2)/12 - (q[1]**2)/0.73108)
         elif self.steps_beyond_done is None:
             # Pole just fell!
             self.steps_beyond_done = 0
-            reward = (1 - (q[0]**2)/8 - (q[1]**2)/0.97478)
+            reward = (1 - (q[0]**2)/12 - (q[1]**2)/0.73108)
         else:
             if self.steps_beyond_done == 0:
                 logger.warn(

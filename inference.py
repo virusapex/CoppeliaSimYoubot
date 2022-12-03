@@ -1,7 +1,9 @@
 import argparse
-from stable_baselines3 import PPO
-from sb3_contrib import RecurrentPPO
 import numpy as np
+from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+from sb3_contrib import RecurrentPPO
+
 from YoubotPole.envs.YoubotPoleEnv import YoubotPoleEnv
 
 
@@ -10,6 +12,8 @@ parser.add_argument("--algo", help="RL Algorithm",
                     default="ppo", type=str, required=False)
 parser.add_argument("-i", "--trained-agent", help="Path to a trained agent",
                     default="best_model", type=str)
+parser.add_argument("--norm", type=str,
+                    default="vecnormalize.pkl", help="Path to a VecNormalize statistics")
 parser.add_argument("--env", type=str,
                     default="YoubotPole-v0", help="Environment ID")
 
@@ -17,7 +21,10 @@ args = parser.parse_args()
 
 
 if args.env == "YoubotPole-v0":
-    env = YoubotPoleEnv(23000)
+    env = DummyVecEnv([lambda: YoubotPoleEnv(23000)])
+    env = VecNormalize.load(args.norm, env)
+    env.training = False
+    env.norm_reward = False
 
 if args.algo == "ppo":
     model = PPO.load(args.trained_agent, env=env)
