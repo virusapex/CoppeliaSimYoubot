@@ -1,6 +1,6 @@
 import argparse
 import numpy as np
-from stable_baselines3 import PPO
+from stable_baselines3 import PPO, SAC
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from sb3_contrib import RecurrentPPO
 
@@ -21,8 +21,9 @@ args = parser.parse_args()
 
 
 if args.env == "YoubotPole-v0":
-    env = DummyVecEnv([lambda: YoubotPoleEnv(23000)])
-    env = VecNormalize.load(args.norm, env)
+    env = DummyVecEnv([lambda: YoubotPoleEnv(23006)])
+    if args.norm:
+        env = VecNormalize.load(args.norm, env)
     env.training = False
     env.norm_reward = False
 
@@ -30,6 +31,8 @@ if args.algo == "ppo":
     model = PPO.load(args.trained_agent, env=env)
 elif args.algo == "ppo_lstm":
     model = RecurrentPPO.load(args.trained_agent, env=env)
+elif args.algo == "sac":
+    model = SAC.load(args.trained_agent, env=env)
 
 # ---------------- Prediction
 print('Prediction')
